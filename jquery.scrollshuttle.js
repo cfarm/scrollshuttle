@@ -1,6 +1,6 @@
 /**
   *
-  * ScrollShuttle 1.0.0
+  * ScrollShuttle 1.2.0
   * By Anthony Colangelo (http://acolangelo.com)
   *
 * */
@@ -11,26 +11,43 @@
 			container: '.scrollshuttle',
 			content: false,
 			duration: 500,
+      scrollOffset: 200,
+      scrollMax: false,
+      scrollMin: false,
 			previousTrigger: '.scrollshuttle-previous',
 			nextTrigger: '.scrollshuttle-next'
 		}, options);
 
-		var shuttle = (function()
-		{
+		var shuttle = (function() {
 			var shuttleContainer = $(options.container);
 			var shuttleInner = shuttleContainer.find(options.content);
 
 			function next()
 			{
-				newScrollLeft = shuttleContainer.scrollLeft() + (shuttleContainer.outerWidth() - 200);
+				newScrollLeft = shuttleContainer.scrollLeft() + calculateOffset();
 				shuttleContainer.stop().animate({scrollLeft: newScrollLeft}, options.duration);
 			}
 
 			function previous()
 			{
-				newScrollLeft = shuttleContainer.scrollLeft() - (shuttleContainer.outerWidth() - 200);
+				newScrollLeft = shuttleContainer.scrollLeft() - calculateOffset();
 				shuttleContainer.stop().animate({scrollLeft: newScrollLeft}, options.duration);
 			}
+
+      function calculateOffset() {
+        var offset = 0;
+
+        if ( options.scrollOffset.toString().substr(-1) == '%' ) {
+          offset = shuttleContainer.outerWidth() - (shuttleContainer.outerWidth() * (parseInt(options.scrollOffset)/100));
+        } else {
+          offset = shuttleContainer.outerWidth() - options.scrollOffset;
+        }
+
+        if ( options.scrollMax && offset > options.scrollMax ) offset = options.scrollMax;
+        if ( options.scrollMin && offset < options.scrollMin ) offset = options.scrollMin;
+        
+        return offset;
+      }
 
 			return {
 				next: next,
