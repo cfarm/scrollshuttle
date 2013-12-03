@@ -1,0 +1,17 @@
+/* CSS Required for the slide container */
+
+.slide-container {
+	width: 100%;
+	max-height: 0;
+	clear: both;
+	overflow-x: scroll;
+	-webkit-transition: all 0.25s linear;
+	-moz-transition: all 0.25s linear;
+	-ms-transition: all 0.25s linear;
+	-o-transition: all 0.25s linear;
+	transition: all 0.25s linear;
+	-webkit-overflow-scrolling: touch;
+}
+.slide-container ul li {
+	float: left;
+}
