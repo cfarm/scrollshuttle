@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>scrollshuttle.js Demo</title>
+	<link rel="stylesheet" type="text/css" href="scrollshuttle.css">
+	<style type="text/css">
+	.slide-container {
+		max-width: 100%;
+	}
+	.slides {
+		margin: 0;
+		padding: 0;
+		height: 200px;
+		overflow-y: hidden;
+	}
+	.slide {
+		display: block;
+		width: 300px;
+		height: 200px;
+		float: left;
+		background: #A3DDCA;
+	}
+	.slide:nth-child(even) {
+		background: #FAD308;
+	}
+	img {
+		max-width: 100%;
+	}
+	</style>
+</head>
+<body>
+
+<h1>scrollshuttle.js Demo</h1>
+
+<div class="slide-container">
+	<ul class="slides">
+		<li class="slide"><img src="http://placekitten.com/300/200" alt=""></li>
+		<li class="slide"><img src="http://placekitten.com/400/200" alt=""></li>
+		<li class="slide"><img src="http://placekitten.com/300/300" alt=""></li>
+		<li class="slide"><img src="http://placekitten.com/300/400" alt=""></li>
+		<li class="slide"><img src="http://placekitten.com/300/500" alt=""></li>
+		<li class="slide"><img src="http://placekitten.com/350/200" alt=""></li>
+
+	</ul>
+</div>
+
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="jquery.scrollshuttle.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	scrollShuttle($('.slide-container'));
+});
+
+Array.max = function( array ){
+	return Math.max.apply( Math, array );
+};
+
+Array.min = function( array ){
+	return Math.min.apply( Math, array );
+};
+
+function scrollShuttle(slider) {
+	var $slider = slider;
+
+	if ( $slider.length == 0 ) return;
+
+	function remeasure(container) {
+		var heightOffset = 20;
+		var masterWidth = 20;
+		var heights = [];
+		container.find('li').each(function(){
+			heights.push($(this).outerHeight());
+			masterWidth += $(this).outerWidth();
+		});
+		container.css('max-height', Array.min(heights) + heightOffset);
+		container.parent().css('max-height', Array.min(heights));
+		container.find('ul').width(masterWidth);
+	}
+
+	$slider.each(function(){
+	    var container = $(this);
+	    container.wrap('<div class="scroll-frame">');
+		remeasure(container);
+
+		var scrollshuttle = $.scrollshuttle({
+			container: $slider,
+			duration: 1000,
+			scrollOffset: '40%',
+			scrollMax: 800
+		});
+
+		$(this).on('click', function(e) {
+			if ( e.pageX >= $(window).outerWidth()/2 ) scrollshuttle.next();
+			else scrollshuttle.previous();
+			e.preventDefault();
+		});
+
+	    $(window).resize(function(){
+			remeasure(container);
+	    });
+	});
+
+	$(document).on('mousemove', $slider, function(e){
+		if ( e.pageX >= $(window).outerWidth()/2 ) $(e.currentTarget).css('cursor', 'url(../i/cursor-next.png), auto');
+		else $(e.currentTarget).css('cursor', 'url(../i/cursor-prev.png), auto');
+	});
+}
+</script>
+</html>
